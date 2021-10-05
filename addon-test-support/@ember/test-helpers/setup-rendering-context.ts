@@ -86,14 +86,26 @@ function jQuerySelector(selector: string): any {
 }
 
 let templateId = 0;
+
+export interface RenderOptions {
+  /**
+    The owner object to use as the basis for the template. In most cases you
+    will not need to specify this, however if you are using ember-engines
+    it is possible to specify the _engine's_ owner instead of the host
+    applications.
+  */
+  owner?: Owner
+}
+
 /**
   Renders the provided template and appends it to the DOM.
 
   @public
   @param {CompiledTemplate} template the template to render
+  @param {RenderOptions} options options hash containing engine owner ({ owner: engineOwner })
   @returns {Promise<void>} resolves when settled
 */
-export function render(template: TemplateFactory): Promise<void> {
+export function render(template: TemplateFactory, options?: RenderOptions): Promise<void> {
   let context = getContext();
 
   if (!template) {
@@ -105,13 +117,13 @@ export function render(template: TemplateFactory): Promise<void> {
       throw new Error('Cannot call `render` without having first called `setupRenderingContext`.');
     }
 
-    let { owner, engine } = context;
+    let { owner } = context;
     let testMetadata = getTestMetadata(context);
     testMetadata.usedHelpers.push('render');
 
     let toplevelView = owner.lookup('-top-level-view:main');
     let OutletTemplate = lookupOutletTemplate(owner);
-    let ownerToRenderFrom = engine || owner;
+    let ownerToRenderFrom = options?.owner || owner;
 
     templateId += 1;
     let templateFullName = `template:-undertest-${templateId}`;
