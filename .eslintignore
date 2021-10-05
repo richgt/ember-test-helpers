@@ -8,7 +8,6 @@
 
 # dependencies
 /node_modules/
-tests/dummy/lib/**/node_modules
 
 # misc
 /coverage/
