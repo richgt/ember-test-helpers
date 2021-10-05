@@ -64,6 +64,22 @@ module('setupRenderingContext', function (hooks) {
       await teardownContext(this);
     });
 
+    test('render works', async function (assert) {
+      await render(hbs`Hi!`);
+
+      assert.equal(this.element.textContent, 'Hi!');
+    });
+
+    test('render works with custom owner', async function (assert) {
+      let alternateOwner = buildOwner();
+      alternateOwner.register('template:components/foo', hbs`hello!`);
+      this.owner.register('template:components/foo', hbs`noooooooo!`);
+
+      await render(hbs`<Foo />`, { owner: alternateOwner });
+
+      assert.equal(this.element.textContent, 'hello!');
+    });
+
     if (EmberENV._APPLICATION_TEMPLATE_WRAPPER !== false) {
       test('render exposes an `.element` property with application template wrapper', async function (assert) {
         let rootElement = document.getElementById('ember-testing');

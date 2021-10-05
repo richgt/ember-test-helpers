@@ -6,14 +6,12 @@ import {
   teardownRenderingContext,
   render,
 } from '@ember/test-helpers';
-import engineResolverFor from 'ember-engines/test-support/engine-resolver-for';
 import hbs from 'htmlbars-inline-precompile';
-
-const modulePrefix = 'eager-engine';
-const resolver = engineResolverFor(modulePrefix);
+import buildOwner from '@ember/test-helpers/build-owner';
 
 module('setupRenderingContext for "ember-engines"', function (hooks) {
   hooks.beforeEach(async function () {
+    const owner = await buildOwner();
     await setupContext(this, { resolver });
     // this.owner now is an engine.
     this.engine = this.owner;
